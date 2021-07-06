@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
-const bcrypt = require("bcryptjs");
 const Schema = mongoose.Schema;
-const { sendEmail } = require('../utils/email')
+const bcrypt = require("bcryptjs");
+const { hashPassword } = require('../utils/middleware')
 /*#Simple format*/
 
 const formatStr = {
@@ -71,11 +71,7 @@ const customerSchema = new Schema({
 customerSchema.pre('save', async function (next) {
     try {
         // #criptage du mot de passe async
-        var bcrypt = require('bcryptjs');
-        var salt = bcrypt.genSaltSync(10);
-        var hash = bcrypt.hashSync(this.password, salt);
-        this.password = hash
-
+        this.password = hashPassword(this.password)
         // #code de validation (code à 6 chiffres)
         this.codeValidation = codevalidation(6);
         next();
