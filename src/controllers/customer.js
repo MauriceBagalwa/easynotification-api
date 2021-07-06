@@ -1,54 +1,30 @@
-const { updateOne } = require("../schema/customer");
+// const { updateOne } = require("../schema/customer");
 const model = require("../schema/customer");
 const { sendEmail, nextMail } = require('../utils/email')
+const { hashPassword } = require('../utils/middleware')
 module.exports = {
     /*
       # afficher tous les clients.
       */
     customers: async (req, res, next) => {
         await model
-            .find()
-            // .find({ created: true })
-            .then((result) => {
+            .find(function (err, result) {
+                if (err) next(err);
                 res.send({
                     status: 200,
                     result,
                 });
             })
-            .catch((err) => {
-                console.log(err)
-                next(err)
-            });
     },
     /*
       # Ajout d'un client.
       */
     customer: async (req, res, next) => {
-        try {
-            const values = new model({
-                name: req.body.name,
-                rccm: req.body.rccm,
-                phone: req.body.phone,
-                email: req.body.email,
-                adresse: req.body.adresse,
-                signature: req.body.signature,
-                password: req.body.password,
-            });
-
-            await values.save().then((result) => {
-                if (result) {
-                    res.status(200).json({
-                        status: 200,
-                        result,
-                    });
-                }
-            }).catch(error => {
-                next(error)
-            })
-
-        } catch (error) {
-            next(error)
-        }
+        const values = new model(req.body);
+        await values.save(async function (err, result) {
+            if (err) next(err);
+            res.status(200).json(result)
+        })
     },
     /*
       # Verification du compte.
@@ -60,7 +36,7 @@ module.exports = {
             codeValidation
         }
         const update = {
-            created: true
+            activated: true
         }
 
         await model.findOneAndUpdate(filter, update, { new: true }, async function (err, result) {
@@ -88,7 +64,15 @@ module.exports = {
             _id: req.body._id
         }
         delete req.body._id
-        const values = req.body
+        const values = {
+            name: req.body.name,
+            rccm: req.body.rccm,
+            codePays: req.body.codePays,
+            phone: req.body.phone,
+            email: req.body.email,
+            adresse: req.body.adresse,
+            signature: req.body.signature
+        }
         await model.updateOne(filter, values, { new: true }, async function (err, result) {
             if (err)
                 next(err)
@@ -131,6 +115,16 @@ module.exports = {
             }
         });
     },
+    changePassword: async (req, res, next) => {
+        const { _id, newPsswd } = req.query
+        await model.findOneAndUpdate({ _id }, { password: hashPassword(newPsswd) }, function (err, find) {
+            if (err) next(err);
+            if (find)
+                res.status(200).json({
+                    find: "Password update succeful"
+                })
+        })
+    },
     resendEmail: async (req, res, next) => {
         const filter = {
             _id: req.body._id,
@@ -160,10 +154,10 @@ module.exports = {
     signin: async (req, res, next) => {
         const { email, psswd } = req.query;
         console.log(req.query)
-        await model.findOne({ email, created: true }, function (err, customer) {
+        await model.findOne({ email, activated: true }, function (err, customer) {
             if (err) next(error)
             // fetch user and test password verification
-            if (customer != null)
+            if (customer)
                 customer.comparePassword(psswd, function (err, isMatch) {
                     if (err) next(err)
                     if (!isMatch) {
@@ -192,5 +186,8 @@ module.exports = {
             status: 200,
             result: "Mail send succefuly."
         })
+    }, infoData: (req, res) => {
+        res.status(200).json(result)
     }
 };
+
