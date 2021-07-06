@@ -27,7 +27,9 @@ const customerSchema = new Schema({
     name: { type: String, required: [true, "Path `name` is required."], lowercase: true, },
     rccm: {
         type: String,
-        required: [true, "The path `rccm` is required."],
+    },
+    codePays: {
+        type: String,
     },
     phone: {
         type: String,
@@ -47,7 +49,6 @@ const customerSchema = new Schema({
     },
     adresse: {
         type: String,
-        required: [true, "Path `adresse` is required."]
     },
     signature: {
         type: String,
@@ -58,37 +59,26 @@ const customerSchema = new Schema({
     },
     sms: { type: Number, default: 0 },
     password: { type: String, required: true },
-    created: {
+    activated: {
         type: Boolean,
         default: false
     },
     codeValidation: {
         type: Number
     }
-});
+}, { timestamps: true });
 
 customerSchema.pre('save', async function (next) {
     try {
         // #criptage du mot de passe async
-
-        bcrypt.genSalt(10, function (err, salt) {
-            bcrypt.hash(this.password, salt, function (err, hash) {
-                this.password = hash;
-            });
-        });
+        var bcrypt = require('bcryptjs');
+        var salt = bcrypt.genSaltSync(10);
+        var hash = bcrypt.hashSync(this.password, salt);
+        this.password = hash
 
         // #code de validation (code à 6 chiffres)
         this.codeValidation = codevalidation(6);
-        const req = {
-            to: this.email,
-            subject: "Confirme count",
-            text: `Votre code de confirmation est ${this.codeValidation}`,
-            html: `<body><b>Hello world? votre code de confirmation est ${this.codeValidation}</b></body>`
-        }
-
-        await sendEmail(req, next)
         next();
-
     } catch (err) {
         next(err)
     }
