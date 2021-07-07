@@ -9,12 +9,12 @@ const agentSchema = new Schema({
     names: modelType,
     email: modelType,
     phone: {
-        type: Number
+        type: String
     },
     function: {
         type: Schema.Types.ObjectId,
-        ref: 'functions'
+        ref: 'Functions'
     }
 }, { timetamps: true })
 
-module.exports = mongoose.model('agents', agentSchema)
+module.exports = mongoose.model('Agents', agentSchema)
