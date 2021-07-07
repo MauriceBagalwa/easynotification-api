@@ -13,4 +13,4 @@ const functionSchema = new Schema({
     }
 }, { timetamps: true })
 
-module.exports = mongoose.model('functions', functionSchema)
+module.exports = mongoose.model('Functions', functionSchema)
