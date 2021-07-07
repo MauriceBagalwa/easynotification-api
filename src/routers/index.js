@@ -1,7 +1,9 @@
-const customer_ctr = require("./customer");
-const group = require("./group")
-const member = require("./member")
-
+// const agent = require('./agent')
+const customer = require('./customer')
+const function_ctr = require('./function')
+const group = require('./group')
+// const mumber = require('./mumber')
+// const submit = require('./submitMobile')
 module.exports = {
-  customer_ctr, group
-};
+  customer, function_ctr
+}
