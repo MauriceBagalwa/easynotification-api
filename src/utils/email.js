@@ -1,9 +1,4 @@
-const nodemailer = require("nodemailer");
-const nodemailMailgum = require('nodemailer-mailgun-transport')
-
-const mailgun = require("mailgun-js");
-const DOMAIN = 'sandbox4d40ae1021bf4e17a4d8ea84495f380b.mailgun.org';
-const mg = mailgun({ apiKey: "2c990609c66e16d4dc4bfa4c191d2d3b-fa6e84b7-9981dc59", domain: DOMAIN });
+const nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
   service: "gmail",
@@ -14,8 +9,8 @@ var transporter = nodemailer.createTransport({
 });
 // send mail with defined transport object
 module.exports = {
-  sendEmail: async (body, next) => {
-    const { to, subject, text, html } = body
+  sendEmail: async (req, res, next) => {
+    const { to, subject, text, html } = req
     let mailOptions = await transporter.sendMail({
 
       from: "mauricebagalwa009@gmail.com", // sender address
@@ -26,14 +21,10 @@ module.exports = {
     });
 
     transporter.sendMail(mailOptions, function (err, info) {
-      if (err) {
-        next(err);
-      } else {
-        res.send({
-          status: 200,
-          result,
-        });
-      }
+      console.log('#2')
+      if (err) next(err);
+      else
+        res.status(200).json(body.result);
     });
 
   },
@@ -49,62 +40,57 @@ module.exports = {
     });
 
     // 
-    transporter.sendMail(mailOptions, function (err, info) {
+    transporter.sendMail(mailOptions, async function (err, info) {
       if (err) {
+        console.log(err)
         next(err);
       } else {
-        // res.send({
-        //   status: 200,
-        //   result,
-        // });
         next()
-        // console.log(info)
       }
     });
 
   },
-  mailgum: async (req, res, next) => {
+  RechargeCountEmail: async function (req, res, next) {
 
-    // const data = {
-    //   from: 'Excited User <me@samples.mailgun.org>',
-    //   to: 'mbagalwa003@gmail.com',
-    //   subject: 'Hello',
-    //   text: 'Testing some Mailgun awesomness!'
-    // };
-    // mg.messages().send(data, function (error, body) {
-    //   if (error)
-    //     next(error)
-    //   else
-    //     res.send({
-    //       body
-    //     })
-    // });
-
-    const auth = {
-      auth: {
-        api_key: '2c990609c66e16d4dc4bfa4c191d2d3b-fa6e84b7-9981dc59',
-        // domain: 'sandbox4d40ae1021bf4e17a4d8ea84495f380b.mailgun.org'
-        domain: 'https://api.mailgun.net/v3/sandbox4d40ae1021bf4e17a4d8ea84495f380b.mailgun.org'
-      }
-    };
-
-    let transporter = nodemailer.createTransport(nodemailMailgum(auth));
-
-    const mailOptions = {
-      from: 'Excited User <me@samples.mailgun.org>',
-      to: 'mbagalwa003@gmail.com',
-      subject: 'Test send',
-      text: 'Testing some Mailgun awesomness!'
+    const body = {
+      to: req.body.email,
+      subject: "Confirme count",
+      html: `<div style="width: 100%; height: auto; box-sizing: border-box; padding: 40px 20px; background-color: #fafafa;">
+      <img style="width: 180px; margin-left: auto; margin-right: auto; margin-bottom: 30px; display: block;"
+      src="https://uptodatedevelopers.com/storage/settings/October2020/LXl8Daw9BfwdjEquV8pS.png"
+      alt="Uptodate Developers" />
+      <div
+          style="width: 60%; height: auto; padding: 8%; margin: auto; box-sizing: border-box; background-color: #ffffff; border-radius: 4px; border: 2px solid rgba(0,0,0,0.1);">
+         
+          <div>
+              <h1 style="text-align: center;"> votre code de recharge ${req.body.code}</h1>
+          </div>
+          <p style="text-align: justify; line-height: 1.6;">Your message {{variable}}<br /><br /></p>
+          <blockquote>
+              <p style="text-align: justify; line-height: 1.6;">Your footer</p>
+          </blockquote>
+      </div>
+  </div>`
     }
 
-    transporter.sendMail(mailOptions, function (err, data) {
-      if (err) {
-        console.log('Error:', err);
-      } else {
-        console.log('Message sent!!!');
-      }
-    })
+    const { to, subject, html } = body
+    let mailOptions = await transporter.sendMail({
 
+      from: "mauricebagalwa009@gmail.com", // sender address
+      to, // list of receivers
+      subject, // Subject line
+      html, // html body
+    });
+
+    //   // 
+    transporter.sendMail(mailOptions, async function (err, info) {
+      if (err) {
+        console.log(err)
+        next(err);
+      } else {
+        res.status(200).json({ result: 'mail send succeful.' })
+      }
+    });
   }
 }
 

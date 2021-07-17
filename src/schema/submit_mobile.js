@@ -3,13 +3,15 @@ const Schema = mongoose.Schema
 
 const submitMobile = new Schema({
     subscriber: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: "Customers"
     },
     reseau: {
         type: String
     },
     reference: {
-        type: String
+        type: String,
+        uppercase: true
     },
     montant: {
         type: Number
@@ -19,8 +21,8 @@ const submitMobile = new Schema({
     },
     etat: {
         type: Number,
-        default: -1
+        default: 0
     }
-})
+}, { timestamps: true })
 
 module.exports = mongoose.model('submits_mobile', submitMobile)

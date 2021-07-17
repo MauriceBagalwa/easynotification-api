@@ -8,9 +8,9 @@ require("./src/utils/db");
  */
 const app = express();
 const port = process.env.PORT || 3000;
-const router = require("./src/controllers");
+const router = require('./src/routers');
 
-app.use(app.use(express.json()));
+app.use(express.json());
 
 /*
  * #Default EndPoint
@@ -24,7 +24,11 @@ app.get("/", (req, res, next) => {
 /*
  * #EndPoint
  */
-app.use("/v1/customer", router.customer_ctr);
+app.use("/v1/customer", router.customer);
+app.use("/v1/config/function", router.function_ctr);
+app.use("/v1/config/agent", router.agent);
+app.use("/v1/subscription", router.subscription);
+app.use("/v1/submit", router.submit);
 /*
 * #Http Error
 -> capture les erreurs lié aux url.

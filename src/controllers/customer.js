@@ -180,14 +180,19 @@ module.exports = {
                 });
         })
     },
+    rechargeSMS: async function (req, res, next) {
+        const { _id, qte } = req.body
+        await model.findOneAndUpdate({ _id }, { sms: qte }, { new: true }, function (err, docs) {
+            if (err) next(err);
+            res.status(200).json(docs)
+        })
+    },
     info: (req, res) => {
         console.log('Game Over')
         res.send({
             status: 200,
             result: "Mail send succefuly."
         })
-    }, infoData: (req, res) => {
-        res.status(200).json(result)
     }
 };
 

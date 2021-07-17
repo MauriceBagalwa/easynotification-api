@@ -24,7 +24,7 @@ module.exports = {
 
     }, update: async (req, res, next) => {
         const filter = {
-            _id=req.body._id
+            _id: req.body._id
         }
         delete req.body._id
         await db.findOneAndUpdate(filter, req.body, { new: true }, function (err, result) {
