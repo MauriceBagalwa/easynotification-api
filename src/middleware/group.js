@@ -9,17 +9,24 @@ module.exports = {
                     status: 200,
                     result
                 })
-        })
+        }).sort({ createdAt: -1 })
     },
     isExist: async (req, res, next) => {
-        const { name } = req.body
-        await db.findOne({ name }, function (err, exist) {
+        const { _id, name, description, entreprise } = req.body
+        console.log(req.body)
+        const filter = {
+            $and: [{ $or: [{ name }, { description }] }, { entreprise },
+            { _id: { $ne: _id } }]
+        }
+
+        await db.findOne(filter, function (err, exist) {
             if (err) next(err)
             else
-                if (exist) res.send({
-                    status: 401,
-                    result: "Group already exist."
-                })
+                if (exist)
+                    res.status(401).json({
+                        status: 401,
+                        result: "Group or description already exist."
+                    })
                 else
                     next()
         })

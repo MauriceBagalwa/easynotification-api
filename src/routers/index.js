@@ -2,7 +2,7 @@ const agent = require('./agent')
 const customer = require('./customer')
 const function_ctr = require('./function')
 const group = require('./group')
-// const mumber = require('./mumber')
+const mumber = require('./mumber')
 const subscription = require('./subscription')
 const submit = require('./submit')
 module.exports = {
@@ -10,5 +10,7 @@ module.exports = {
   function_ctr,
   agent,
   subscription,
-  submit
+  submit,
+  mumber,
+  group
 }

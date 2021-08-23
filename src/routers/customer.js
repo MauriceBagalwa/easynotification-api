@@ -8,7 +8,8 @@ router.get("/", controller.customers);
 router.get("/singin", controller.signin)
 
 //#Post
-router.post("/", middleware.customerExist, controller.customer);
+// router.post("/", middleware.customerExist, controller.customer);
+router.post("/", controller.customer);
 router.post("/activation", controller.activeCustomer);
 router.post("/confirmation", controller.resendEmail, controller.info);
 router.post("/resend", middleware.customerExist, controller.resendEmail, controller.info);

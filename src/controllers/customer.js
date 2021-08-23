@@ -23,7 +23,8 @@ module.exports = {
         const values = new model(req.body);
         await values.save(async function (err, result) {
             if (err) next(err);
-            res.status(200).json(result)
+            else
+                res.status(200).json(result)
         })
     },
     /*

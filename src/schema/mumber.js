@@ -4,6 +4,8 @@ const Schema = mongoose.Schema
 const memberSchema = new Schema({
     fullname: {
         type: String,
+        lowercase: true,
+        max: [25, 'le nombre de caractere supperieure.'],
         unique: true
     },
     indice: {
@@ -11,12 +13,27 @@ const memberSchema = new Schema({
     },
     number: {
         type: Number,
-        unique: true
+        unique: [true, `le numéro ${this.number} est déjà utilisé`]
     },
-    activ: {
+    genre: {
+        type: String,
+        enum: { values: ['masculin', 'feminin'], message: `{this.genre} is not supported` },
+    },
+    entreprise: {
+        type: Schema.Types.ObjectId,
+        ref: 'Customers'
+    },
+    groups:
+        [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Groups',
+            }
+        ],
+    etat: {
         type: Boolean,
         default: true
-    }
-})
+    },
+}, { timestamps: true })
 
 module.exports = mongoose.model('Mumbers', memberSchema)

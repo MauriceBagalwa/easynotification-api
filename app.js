@@ -27,8 +27,12 @@ app.get("/", (req, res, next) => {
 app.use("/v1/customer", router.customer);
 app.use("/v1/config/function", router.function_ctr);
 app.use("/v1/config/agent", router.agent);
+
 app.use("/v1/subscription", router.subscription);
 app.use("/v1/submit", router.submit);
+
+app.use("/v1/group", router.group);
+app.use("/v1/member", router.mumber);
 /*
 * #Http Error
 -> capture les erreurs lié aux url.

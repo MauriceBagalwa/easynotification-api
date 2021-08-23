@@ -20,6 +20,7 @@ module.exports = {
         await customer.findOne({ $and: [{ $or: [{ name }, { rccm }, { email }, { signature }] }, { activated: true }, { _id: { $ne: _id } }] }, function (err, find) {
             if (err) next(err);
             if (find) {
+                console.log(findByIdAndRemove)
                 res.send({
                     status: 409,
                     result: "`Entrepriserccm`,`rccm`,`email`,`signature` l'un de ces donnée est déjà utliser.",
